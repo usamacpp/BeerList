@@ -10,8 +10,10 @@
 
 @interface ViewController : UIViewController
 
-    <UITableViewDataSource, UITableViewDelegate,
+    <UITableViewDataSource,
     NSXMLParserDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+
+@property (strong, nonatomic) IBOutlet UITableView *table;
 
 @end
 

@@ -14,26 +14,21 @@
 
 @implementation ViewController {
     
-    NSMutableDictionary *BeerList;
+    NSMutableDictionary *beerData;
     NSMutableData *responseData;
     NSMutableString *currentElement;
-    NSMutableArray *list;
+    NSMutableArray *beerList;
     int i;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    list = [[NSMutableArray alloc]init];
-    BeerList = [[NSMutableDictionary alloc]init];
+    // init beer list to show into table view
+    beerList = [[NSMutableArray alloc]init];
 
     [self datadidload];
-    
-
-    
 }
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -96,8 +91,8 @@
     [nsXmlparser parse];
     NSString *responseDataString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
     
-//    NSLog(@"%@", responseDataString);
-    }
+    NSLog(@"%@", responseDataString);
+}
 
 #pragma mark - XML Parser Method
 
@@ -105,36 +100,40 @@
    // NSLog(@"%@", currentElement);
     
     if ([elementName isEqualToString:@"beer_name"]) {
-        [list addObject:currentElement];
+        beerData = [[NSMutableDictionary alloc]init];
+        [beerData setValue:currentElement forKey:@"Name"];
         
     }
     
     if ([elementName isEqualToString:@"beer_location"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"Location"];
     }
     
     if ([elementName isEqualToString:@"beer_ABV"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"ABV"];
     }
     
     if ([elementName isEqualToString:@"beer_size"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"Size"];
     }
     
     if ([elementName isEqualToString:@"beer_price"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"Price"];
     }
     
     if ([elementName isEqualToString:@"beer_description"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"Description"];
     }
     
     if ([elementName isEqualToString:@"beer_category_name"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"catName"];
     }
     
     if ([elementName isEqualToString:@"beer_date_added"]) {
-        [list addObject:currentElement];
+        [beerData setValue:currentElement forKey:@"dateAdded"];
+        
+        [beerList addObject:beerData];
+        [_table reloadData];
     }
     
     
@@ -167,21 +166,18 @@
 
 - (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict {
 
-    currentElement = [NSMutableString string];
-
-    
+    //here make a new object of beer data dictionary
+    currentElement = [[NSMutableString alloc] init];
 }
 
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
     
     [currentElement appendString:string];
-
-
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-   return [list count];
+   return [beerList count];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -194,12 +190,12 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    cell.textLabel.text = list[indexPath.row];
+    cell.textLabel.text = [beerList[indexPath.row] valueForKey:@"Name"];
 
     
-    for (NSString * obj in list) {
+    /*for (NSString * obj in beerList) {
         NSLog(@"Array = %@",obj);
-    }
+    }*/
     
     return cell;
 }
